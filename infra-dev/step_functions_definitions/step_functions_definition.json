@@ -1,0 +1,44 @@
+{
+  "Comment": "Data Engineering Pipeline",
+  "StartAt": "ExtractData",
+  "States": {
+
+    "ExtractData": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "Parameters": {
+        "FunctionName": "${lambda_arn}"
+      },
+      "OutputPath": "$.Payload",
+      "Next": "SilverLayer"
+    },
+
+    "SilverLayer": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::glue:startJobRun.sync",
+      "Parameters": {
+        "JobName": "${silver_job}"
+      },
+      "Next": "GoldLayer"
+    },
+
+    "GoldLayer": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::glue:startJobRun.sync",
+      "Parameters": {
+        "JobName": "${gold_job}"
+      },
+      "Next": "UpdateCatalog"
+    },
+
+    "UpdateCatalog": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::aws-sdk:glue:startCrawler",
+      "Parameters": {
+        "Name": "${crawler_name}"
+      },
+      "End": true
+    }
+
+  }
+}
