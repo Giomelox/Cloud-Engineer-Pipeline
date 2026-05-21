@@ -1,0 +1,22 @@
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+crash.log
+
+# Variáveis sensíveis (Caso eu crie depois)
+*.tfvars
+*.tfvars.json
+
+# Override (Caso haja necessidade de criar um arquivo de override para testes ou algo do tipo)
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# CLI config
+.terraformrc
+terraform.rc
+
+# env
+.env
