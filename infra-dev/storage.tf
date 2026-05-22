@@ -9,6 +9,14 @@ resource "aws_s3_bucket" "glue_bucket_dev_data_engineering" {
   }
 }
 
+resource "aws_s3_bucket_versioning" "glue_bucket_versioning_dev_data_engineering" {
+  bucket = aws_s3_bucket.glue_bucket_dev_data_engineering.id
+
+  versioning_configuration {
+    status = "Enabled"
+  }
+}
+
 resource "aws_s3_bucket_public_access_block" "glue_bucket_public_access_block_dev_data_engineering" {
   bucket = aws_s3_bucket.glue_bucket_dev_data_engineering.id
 
@@ -40,6 +48,14 @@ resource "aws_s3_bucket" "bronze_bucket_dev_data_engineering" {
   tags = {
     Name  = "bronze-bucket-dev-data-engineering"
     owner = "dev-data-engineering"
+  }
+}
+
+resource "aws_s3_bucket_versioning" "bronze_versioning" {
+  bucket = aws_s3_bucket.bronze_bucket_dev_data_engineering.id
+
+  versioning_configuration {
+    status = "Enabled"
   }
 }
 
@@ -75,6 +91,14 @@ resource "aws_s3_bucket" "silver_bucket_dev_data_engineering" {
   }
 }
 
+resource "aws_s3_bucket_versioning" "silver_versioning" {
+  bucket = aws_s3_bucket.silver_bucket_dev_data_engineering.id
+
+  versioning_configuration {
+    status = "Enabled"
+  }
+}
+
 resource "aws_s3_bucket_public_access_block" "silver_bucket_public_access_block_dev_data_engineering" {
   bucket = aws_s3_bucket.silver_bucket_dev_data_engineering.id
 
@@ -105,6 +129,14 @@ resource "aws_s3_bucket" "gold_bucket_dev_data_engineering" {
   tags = {
     Name  = "gold-bucket-dev-data-engineering"
     owner = "dev-data-engineering"
+  }
+}
+
+resource "aws_s3_bucket_versioning" "gold_versioning" {
+  bucket = aws_s3_bucket.gold_bucket_dev_data_engineering.id
+
+  versioning_configuration {
+    status = "Enabled"
   }
 }
 
@@ -171,6 +203,9 @@ resource "aws_redshift_cluster" "redshift_dev_data_engineering" {
   cluster_type = "single-node"
 
   encrypted = true
+
+  skip_final_snapshot = false
+  final_snapshot_identifier = "redshift-dev-data-engineering-final"
 
   publicly_accessible       = false
   vpc_security_group_ids    = [aws_security_group.ssg_redshift_dev_data_engineering.id]

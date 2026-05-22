@@ -7,8 +7,8 @@ resource "aws_glue_job" "this" {
   name     = each.value.name
   role_arn = each.value.role_arn
 
-  max_retries       = 2
-  timeout           = 60
+  max_retries       = 0
+  timeout           = 30
   glue_version      = "5.0"
   number_of_workers = each.value.number_workers
   worker_type       = each.value.worker_type

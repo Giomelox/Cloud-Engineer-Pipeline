@@ -24,7 +24,7 @@ resource "aws_sfn_state_machine" "state_machine_dev_data_engineering" {
 
   type       = "STANDARD"
 
-  definition = templatefile("${path.module}/steps_functions_defitions/step_function_definitions.json", {
+  definition = templatefile("${path.module}/steps_functions_definitions/step_function_definition.json", {
     lambda_arn  = module.lambda.lambda_arn
     silver_job  = module.glue_jobs.silver_job_name
     gold_job    = module.glue_jobs.gold_job_name

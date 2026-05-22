@@ -6,6 +6,8 @@ variable "jobs" {
     number_workers  = number
     role_arn        = string
     dependencies_path = string
+    source_bucket     = string
+    target_bucket     = string
   }))
 }
 

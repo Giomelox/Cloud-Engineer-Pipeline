@@ -63,19 +63,29 @@ resource "aws_internet_gateway" "igw_dev_data_engineering" {
   }
 }
 
-# Criação do elastic IP para o NAT Gateway
-resource "aws_eip" "nat_eip_dev_data_engineering" {
+# Criação do elastic IP para o NAT Gateway da AZ1
+resource "aws_eip" "nat_eip_dev_data_engineering_az1" {
   domain = "vpc"
 
   tags = {
-    Name  = "nat-eip-dev-data-engineering"
+    Name  = "nat-eip-dev-data-engineering-az1"
+    owner = "dev-data-engineering"
+  }
+}
+
+# Criação do elastic IP para o NAT Gateway da AZ2
+resource "aws_eip" "nat_eip_dev_data_engineering_az2" {
+  domain = "vpc"
+
+  tags = {
+    Name  = "nat-eip-dev-data-engineering-az2"
     owner = "dev-data-engineering"
   }
 }
 
 # Criação do NAT Gateway para permitir que as subnets privadas da AZ1 acessem a internet.
-resource "aws_nat_gateway" "nat_gw_dev_data_engineering" {
-  allocation_id = aws_eip.nat_eip_dev_data_engineering.id
+resource "aws_nat_gateway" "nat_gw_dev_data_engineering_az1" {
+  allocation_id = aws_eip.nat_eip_dev_data_engineering_az1.id
   subnet_id     = aws_subnet.public_subnet_dev_data_engineering_az1.id
 
   tags = {
@@ -87,8 +97,8 @@ resource "aws_nat_gateway" "nat_gw_dev_data_engineering" {
 }
 
 # Criação do NAT Gateway para permitir que as subnets privadas da AZ2 acessem a internet.
-resource "aws_nat_gateway" "nat_gw_dev_data_engineering" {
-  allocation_id = aws_eip.nat_eip_dev_data_engineering.id
+resource "aws_nat_gateway" "nat_gw_dev_data_engineering_az2" {
+  allocation_id = aws_eip.nat_eip_dev_data_engineering_az2.id
   subnet_id     = aws_subnet.public_subnet_dev_data_engineering_az2.id
 
   tags = {
@@ -145,7 +155,7 @@ resource "aws_route_table" "private_route_table_dev_data_engineering_az1" {
 resource "aws_route" "private_route_dev_data_engineering_az1" {
   route_table_id         = aws_route_table.private_route_table_dev_data_engineering_az1.id
   destination_cidr_block = "0.0.0.0/0"
-  nat_gateway_id         = aws_nat_gateway.nat_gw_dev_data_engineering.id
+  nat_gateway_id         = aws_nat_gateway.nat_gw_dev_data_engineering_az1.id
 }
 
 resource "aws_route_table_association" "private_route_table_association_dev_data_engineering_az1" {
@@ -202,7 +212,7 @@ resource "aws_route_table" "private_route_table_dev_data_engineering_az2" {
 resource "aws_route" "private_route_dev_data_engineering_az2" {
   route_table_id         = aws_route_table.private_route_table_dev_data_engineering_az2.id
   destination_cidr_block = "0.0.0.0/0"
-  nat_gateway_id         = aws_nat_gateway.nat_gw_dev_data_engineering.id
+  nat_gateway_id         = aws_nat_gateway.nat_gw_dev_data_engineering_az2.id
 }
 
 resource "aws_route_table_association" "private_route_table_association_dev_data_engineering_az2" {

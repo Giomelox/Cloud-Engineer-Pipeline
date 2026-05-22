@@ -55,9 +55,8 @@ module "glue_jobs" {
 
       role_arn        = aws_iam_role.glue_gold_job_role_dev_data_engineering.arn
 
-      source_bucket   = "bronze"
+      source_bucket   = "silver"
       target_bucket   = "gold"
     }
   }
-  
 }

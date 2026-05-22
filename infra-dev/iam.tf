@@ -1,19 +1,3 @@
-/*
-
- IAM necessários: 
- 
- Glue Silver - Precisa de acesso de leitura ao bucket S3 onde os scripts e dependências estão armazenados, acesso e leitura ao bucket S3 Bronze,
- acesso de escrita ao bucket S3 Silver.
-
- Glue Gold - Precisa de acesso de leitura ao bucket S3 onde os scripts e dependências estão armazenados, acesso e leitura ao bucket S3 Silver,
- acesso de escrita ao bucket S3 Gold, acesso para escrever no data catalog
-
- Lambda - Precisa de acesso de escrita ao bucket S3 bronze, onde os dados ficarão armazenados os dados extraídos via API.
-
- Step Functions - Precisa de permissão para iniciar os jobs do Glue e invocar as funções Lambda.
-
-*/
-
 # =============================================================
 # IAM ROLES E POLICIES PARA O GLUE JOBS SILVER
 # =============================================================
@@ -199,12 +183,23 @@ resource "aws_iam_role_policy" "lambda_execution_policy" {
           "${aws_s3_bucket.bronze_bucket_dev_data_engineering.arn}/*"
         ]
       },
+
       {
         Effect = "Allow"
         Action = [
           "logs:CreateLogGroup",
           "logs:CreateLogStream",
           "logs:PutLogEvents"
+        ]
+        Resource = "*"
+      },
+
+      {
+        Effect = "Allow"
+        Action = [
+          "ec2:CreateNetworkInterface",
+          "ec2:DescribeNetworkInterfaces",
+          "ec2:DeleteNetworkInterface"
         ]
         Resource = "*"
       }
@@ -270,9 +265,9 @@ resource "aws_iam_role_policy" "glue_crawler_policy" {
           "glue:GetPartition"
         ]
         Resource = [
-          "arn:aws:glue:${var.region}:${var.account_id}:catalog",
-          "arn:aws:glue:${var.region}:${var.account_id}:database/gold",
-          "arn:aws:glue:${var.region}:${var.account_id}:table/gold/*"
+          "arn:aws:glue:${var.region}:${data.aws_caller_identity.current.account_id}:catalog",
+          "arn:aws:glue:${var.region}:${data.aws_caller_identity.current.account_id}:database/glue-catalog-database-dev-data-engineering",
+          "arn:aws:glue:${var.region}:${data.aws_caller_identity.current.account_id}:table/glue-catalog-database-dev-data-engineering/*"
         ]
       },
       
@@ -328,6 +323,7 @@ resource "aws_iam_role_policy" "step_functions_policy" {
       {
         Effect = "Allow"
         Action = [
+          "glue:GetCrawler",
           "glue:StartCrawler"
         ]
         Resource = [
