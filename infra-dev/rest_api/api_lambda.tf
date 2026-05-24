@@ -34,13 +34,21 @@ resource "aws_api_gateway_resource" "summoner_resource_dev_data_engineering" {
   path_part   = "{name}"
 }
 
+# Criando um método GET para o recurso criado, que exigirá uma chave de API para acesso.
 resource "aws_api_gateway_method" "summoner_method_dev_data_engineering" {
   rest_api_id   = aws_api_gateway_rest_api.data_engineering_api.id
   resource_id   = aws_api_gateway_resource.summoner_resource_dev_data_engineering.id
   http_method   = "GET"
-  authorization = "AWS_IAM"
+  authorization = "NONE"
+
+  api_key_required = true
+
+  request_parameters = {
+    "method.request.path.name" = true
+  }
 }
 
+# Criando a integração entre o método GET e a função Lambda, utilizando o tipo AWS_PROXY para permitir a passagem de toda a requisição para o Lambda.
 resource "aws_api_gateway_integration" "summoner_integration_dev_data_engineering" {
   rest_api_id             = aws_api_gateway_rest_api.data_engineering_api.id
   resource_id             = aws_api_gateway_resource.summoner_resource_dev_data_engineering.id
@@ -50,6 +58,19 @@ resource "aws_api_gateway_integration" "summoner_integration_dev_data_engineerin
   uri                     = module.lambda.lambda_invoke_arn
 }
 
+# Criando a permissão para que o API Gateway possa invocar a função Lambda.
+resource "aws_lambda_permission" "api_gateway_permission_dev_data_engineering" {
+  statement_id  = "AllowAPIGatewayInvoke"
+  action        = "lambda:InvokeFunction"
+  function_name = module.lambda.lambda_arn
+  principal     = "apigateway.amazonaws.com"
+
+  source_arn = "${aws_api_gateway_rest_api.data_engineering_api.execution_arn}/*/*"
+
+  source_account = var.account_id
+}
+
+# Criando a implantação da API Gateway, que será utilizada para criar um estágio e disponibilizar a API para acesso.
 resource "aws_api_gateway_deployment" "data_engineering_api_deployment" {
 
   rest_api_id = aws_api_gateway_rest_api.data_engineering_api.id
@@ -69,6 +90,7 @@ resource "aws_api_gateway_deployment" "data_engineering_api_deployment" {
   depends_on = [aws_api_gateway_integration.summoner_integration_dev_data_engineering]
 }
 
+# Criando um estágio para a API Gateway, que será utilizado para disponibilizar a API para acesso.
 resource "aws_api_gateway_stage" "data_engineering_api_stage" {
   stage_name    = "dev"
   rest_api_id   = aws_api_gateway_rest_api.data_engineering_api.id
@@ -82,13 +104,45 @@ resource "aws_api_gateway_stage" "data_engineering_api_stage" {
   }
 }
 
-resource "aws_lambda_permission" "api_gateway_permission_dev_data_engineering" {
-  statement_id  = "AllowAPIGatewayInvoke"
-  action        = "lambda:InvokeFunction"
-  function_name = module.lambda.lambda_arn
-  principal     = "apigateway.amazonaws.com"
+# Criando uma chave de API para a API Gateway, que será utilizada para controlar o acesso à API.
+resource "aws_api_gateway_api_key" "data_engineering_api_key" {
+  name      = "DataEngineeringAPIKey"
+  enabled   = true
 
-  source_arn = "${aws_api_gateway_rest_api.data_engineering_api.execution_arn}/dev/GET/summoner"
+  tags = {
+    Name  = "DataEngineeringAPIKey"
+    owner = "dev-data-engineering"
+  }
+}
 
-  source_account = var.account_id
+# Criando um plano de uso para a API Gateway, que será utilizado para definir as regras de limitação e cota para as requisições que utilizarem a chave de API.
+resource "aws_api_gateway_usage_plan" "data_engineering_api_usage_plan" {
+  name = "DataEngineeringAPIUsagePlan"
+
+  api_stages {
+    api_id = aws_api_gateway_rest_api.data_engineering_api.id
+    stage   = aws_api_gateway_stage.data_engineering_api_stage.stage_name
+  }
+
+  throttle_settings {
+    rate_limit  = 10 # Requisições por segundo
+    burst_limit = 5 # Pico máximo de requisições em um curto período
+  }
+
+  quota_settings {
+    limit  = 20 # Limite diário de requisições
+    period = "DAY"
+  }
+
+   tags = {
+    Name  = "DataEngineeringAPIUsagePlan"
+    owner = "dev-data-engineering"
+  }
+}
+
+# Associando a chave de API ao plano de uso, para que as regras de limitação e cota sejam aplicadas às requisições que utilizarem essa chave.
+resource "aws_api_gateway_usage_plan_key" "data_engineering_api_usage_plan_key" {
+  key_id        = aws_api_gateway_api_key.data_engineering_api_key.id
+  key_type      = "API_KEY"
+  usage_plan_id = aws_api_gateway_usage_plan.data_engineering_api_usage_plan.id
 }
