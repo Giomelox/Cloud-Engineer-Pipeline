@@ -204,7 +204,7 @@ resource "aws_redshift_cluster" "redshift_dev_data_engineering" {
 
   encrypted = true
 
-  skip_final_snapshot = false
+  skip_final_snapshot       = false
   final_snapshot_identifier = "redshift-dev-data-engineering-final"
 
   publicly_accessible       = false

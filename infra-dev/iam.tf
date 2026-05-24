@@ -270,7 +270,7 @@ resource "aws_iam_role_policy" "glue_crawler_policy" {
           "arn:aws:glue:${var.region}:${data.aws_caller_identity.current.account_id}:table/glue-catalog-database-dev-data-engineering/*"
         ]
       },
-      
+
     ]
   })
 }
