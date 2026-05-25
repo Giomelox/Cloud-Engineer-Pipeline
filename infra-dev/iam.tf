@@ -210,7 +210,7 @@ resource "aws_iam_role_policy" "lambda_execution_policy" {
           "secretsmanager:GetSecretValue"
         ]
         Resource = [
-          aws_secretsmanager_secret.riot_api_key.arn
+          aws_secretsmanager_secret.data_engineering_api_secret.arn
         ]
       }
 
@@ -327,8 +327,8 @@ resource "aws_iam_role_policy" "step_functions_policy" {
           "glue:StartJobRun",
         ]
         Resource = [
-          aws_glue_job.this["silver_job"].arn,
-          aws_glue_job.this["gold_job"].arn
+          module.glue_jobs.silver_job_arn,
+          module.glue_jobs.gold_job_arn,
         ]
       },
 
@@ -339,7 +339,7 @@ resource "aws_iam_role_policy" "step_functions_policy" {
           "glue:StartCrawler"
         ]
         Resource = [
-          aws_glue_crawler.dev_data_engineering_crawler.arn
+          module.glue_jobs.crawler_arn
         ]
       },
 

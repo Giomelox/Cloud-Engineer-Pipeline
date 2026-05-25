@@ -224,6 +224,9 @@ resource "aws_route_table_association" "private_route_table_association_dev_data
 # ============================================================
 
 
+/*
+Não será utilizado para o projeto, mas deixarei o código comentado para referência futura.
+(Decisão tomada após analisar novamente a estrutura do meu projeto e sua finalidade.)
 
 # Criando um subnet group para o RDS, associando-o à sub-rede privada criada anteriormente, 
 # garantindo que o banco de dado esteja isolado e protegido dentro da VPC.
@@ -241,6 +244,7 @@ resource "aws_db_subnet_group" "db_subnet_group_dev_data_engineering" {
     owner = "dev-data-engineering"
   }
 }
+*/
 
 # Criando um subnet group para o Redshift, associando-o à sub-rede privada criada anteriormente, 
 # garantindo que o cluster de análise de dados esteja isolado e protegido dentro da VPC.

@@ -20,9 +20,12 @@ resource "aws_security_group" "ssg_lambda_dev_data_engineering" {
   }
 }
 
+/*
+Não será utilizado para o projeto, mas deixarei o código comentado para referência futura.
+(Decisão tomada após analisar novamente a estrutura do meu projeto e sua finalidade.)
+
 # Criar um security group para o RDS, permitindo apenas o tráfego de entrada na porta 5432 (PostgreSQL) a partir do security group das funções Lambda, 
 # e bloqueando todo o tráfego de saída.
-
 resource "aws_security_group" "ssg_rds_dev_data_engineering" {
   vpc_id      = aws_vpc.vpc_dev_data_engineering.id
   name        = "ssg-rds-dev-data-engineering"
@@ -42,6 +45,7 @@ resource "aws_security_group" "ssg_rds_dev_data_engineering" {
     security_groups = [aws_security_group.ssg_lambda_dev_data_engineering.id]
   }
 }
+*/
 
 # Criar um security group para o Redshift, permitindo apenas o tráfego de entrada na porta 5439 (Redshift) a partir do security group das funções Lambda, 
 # e bloqueando todo o tráfego de saída.

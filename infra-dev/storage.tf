@@ -162,6 +162,9 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "gold_bucket_serve
 # ============================================================
 # ============================================================
 
+/*
+Não será utilizado para o projeto, mas deixarei o código comentado para referência futura. 
+(Decisão tomada após analisar novamente a estrutura do meu projeto e sua finalidade.)
 
 # Criando um RDS PostgreSQL para armazenar dados estruturados, com configurações de segurança e rede adequadas para garantir a proteção dos dados 
 # e o acesso controlado a partir das funções Lambda e outros serviços da AWS envolvidos no projeto.
@@ -189,6 +192,7 @@ resource "aws_db_instance" "rds_dev_data_engineering" {
     owner = "dev-data-engineering"
   }
 }
+*/
 
 # Criando um cluster Redshift para análise de dados em larga escala, com configurações de segurança e rede adequadas para garantir a proteção dos dados 
 # e o acesso controlado a partir das funções Lambda e outros serviços da AWS envolvidos no projeto.

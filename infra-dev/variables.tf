@@ -9,11 +9,13 @@ variable "profile" {
   type        = string
 }
 
+/*
 variable "db_password" {
   description = "Password for the RDS instance"
   type        = string
   sensitive   = true
 }
+*/
 
 variable "redshift_password" {
   description = "Password for the Redshift cluster"

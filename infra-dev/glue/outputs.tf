@@ -17,3 +17,7 @@ output "gold_job_arn" {
 output "crawler_name" {
   value = aws_glue_crawler.dev_data_engineering_crawler.name
 }
+
+output "crawler_arn" {
+  value = aws_glue_crawler.dev_data_engineering_crawler.arn
+}
