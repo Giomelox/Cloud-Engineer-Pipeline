@@ -17,8 +17,10 @@ module "lambda" {
 }
 
 module "api_lambda" {
-  source     = "./rest_api/api_lambda"
-  account_id = data.aws_caller_identity.current.account_id
+  source            = "./rest_api"
+  account_id        = data.aws_caller_identity.current.account_id
+  lambda_arn        = module.lambda.lambda_arn
+  lambda_invoke_arn = module.lambda.lambda_invoke_arn
 }
 
 module "glue_jobs" {

@@ -20,3 +20,6 @@ terraform.rc
 
 # env
 .env
+
+# AWS
+aws

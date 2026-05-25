@@ -12,7 +12,7 @@ resource "aws_security_group" "ssg_lambda_dev_data_engineering" {
   }
 
   egress {
-    description = "Permitir todo o tráfego de saída"
+    description = "Permitir-todo-trafego-de-saida"
     from_port   = 0
     to_port     = 0
     protocol    = "-1"

@@ -8,6 +8,10 @@ aws_api_gateway_integration     → conecta o método ao Lambda
 aws_api_gateway_deployment      → faz o deploy da API
 aws_api_gateway_stage           → define o estágio (dev, prod)
 aws_lambda_permission           → permite o API Gateway invocar o Lambda
+
+aws_api_gateway_api_key         → cria uma chave de API para controle de acesso
+aws_api_gateway_usage_plan      → define as regras de limitação e cota para a chave
+aws_api_gateway_usage_plan_key  → associa a chave de API ao plano de uso
 */
 
 # Criando a API Gateway para o projeto de engenharia de dados, com um recurso e método para invocar as funções Lambda.
@@ -55,14 +59,14 @@ resource "aws_api_gateway_integration" "summoner_integration_dev_data_engineerin
   http_method             = aws_api_gateway_method.summoner_method_dev_data_engineering.http_method
   integration_http_method = "POST"
   type                    = "AWS_PROXY"
-  uri                     = module.lambda.lambda_invoke_arn
+  uri                     = var.lambda_invoke_arn
 }
 
 # Criando a permissão para que o API Gateway possa invocar a função Lambda.
 resource "aws_lambda_permission" "api_gateway_permission_dev_data_engineering" {
   statement_id  = "AllowAPIGatewayInvoke"
   action        = "lambda:InvokeFunction"
-  function_name = module.lambda.lambda_arn
+  function_name = var.lambda_arn
   principal     = "apigateway.amazonaws.com"
 
   source_arn = "${aws_api_gateway_rest_api.data_engineering_api.execution_arn}/*/*"

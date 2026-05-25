@@ -1,8 +1,8 @@
 terraform {
 
   backend "s3" {
-    bucket  = "infra-dev-terraform-state"
-    key     = "infra-dev/terraform.tfstate"
+    bucket  = "infra-dev-terraform-state-project-engineer"
+    key     = "infra-dev/.terraform/terraform.tfstate"
     region  = "us-east-1"
     encrypt = true
   }
@@ -20,4 +20,5 @@ terraform {
 
 provider "aws" {
   region = var.region
+  profile = var.profile
 }

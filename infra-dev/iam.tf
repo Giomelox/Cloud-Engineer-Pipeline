@@ -202,7 +202,18 @@ resource "aws_iam_role_policy" "lambda_execution_policy" {
           "ec2:DeleteNetworkInterface"
         ]
         Resource = "*"
+      },
+
+      {
+        Effect = "Allow"
+        Action = [
+          "secretsmanager:GetSecretValue"
+        ]
+        Resource = [
+          aws_secretsmanager_secret.riot_api_key.arn
+        ]
       }
+
     ]
   })
 }
@@ -250,6 +261,7 @@ resource "aws_iam_role_policy" "glue_crawler_policy" {
           "${aws_s3_bucket.gold_bucket_dev_data_engineering.arn}/*"
         ]
       },
+
       {
         Effect = "Allow"
         Action = [
@@ -269,7 +281,7 @@ resource "aws_iam_role_policy" "glue_crawler_policy" {
           "arn:aws:glue:${var.region}:${data.aws_caller_identity.current.account_id}:database/glue-catalog-database-dev-data-engineering",
           "arn:aws:glue:${var.region}:${data.aws_caller_identity.current.account_id}:table/glue-catalog-database-dev-data-engineering/*"
         ]
-      },
+      }
 
     ]
   })
@@ -373,14 +385,16 @@ resource "aws_iam_role_policy" "eventbridge_policy" {
 
   policy = jsonencode({
     Version = "2012-10-17"
-    Statement = [{
-      Effect = "Allow"
-      Action = [
-        "states:StartExecution"
-      ]
-      Resource = [
-        aws_sfn_state_machine.state_machine_dev_data_engineering.arn
-      ]
-    }]
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "states:StartExecution"
+        ]
+        Resource = [
+          aws_sfn_state_machine.state_machine_dev_data_engineering.arn
+        ]
+      } 
+    ]
   })
 }
