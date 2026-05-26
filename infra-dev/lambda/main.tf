@@ -20,6 +20,7 @@ resource "aws_lambda_function" "lambda_dev_data_engineering" {
     variables = {
       S3_BRONZE_BUCKET = var.s3_bronze_bucket_name
       S3_SILVER_BUCKET = var.s3_silver_bucket_name
+      STATE_MACHINE_ARN = var.state_machine_arn
     }
   }
 

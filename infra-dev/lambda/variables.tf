@@ -17,3 +17,7 @@ variable "subnet_ids" {
 variable "security_group_ids" {
   type = list(string)
 }
+
+variable "state_machine_arn" {
+  type = string
+}

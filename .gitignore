@@ -23,3 +23,9 @@ terraform.rc
 
 # AWS
 aws
+
+# lambda ingestion zip
+*/ingestion.zip
+
+# build
+build/

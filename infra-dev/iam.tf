@@ -212,6 +212,16 @@ resource "aws_iam_role_policy" "lambda_execution_policy" {
         Resource = [
           aws_secretsmanager_secret.data_engineering_api_secret.arn
         ]
+      },
+
+      {
+        Effect = "Allow"
+        Action = [
+          "states:StartExecution"
+        ]
+        Resource = [
+          aws_sfn_state_machine.state_machine_dev_data_engineering.arn
+        ]
       }
 
     ]
@@ -352,49 +362,6 @@ resource "aws_iam_role_policy" "step_functions_policy" {
           module.lambda.lambda_arn
         ]
       }
-    ]
-  })
-}
-
-# =============================================================
-# IAM ROLES E POLICIES PARA O EVENTBRIDGE
-# =============================================================
-
-resource "aws_iam_role" "eventbridge_role" {
-  name = "eventbridge-start-stepfunctions"
-
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [{
-      Effect = "Allow"
-      Principal = {
-        Service = "events.amazonaws.com"
-      }
-      Action = "sts:AssumeRole"
-    }]
-  })
-
-  tags = {
-    Name  = "eventbridge-start-stepfunctions"
-    owner = "dev-data-engineering"
-  }
-}
-
-resource "aws_iam_role_policy" "eventbridge_policy" {
-  role = aws_iam_role.eventbridge_role.id
-
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Effect = "Allow"
-        Action = [
-          "states:StartExecution"
-        ]
-        Resource = [
-          aws_sfn_state_machine.state_machine_dev_data_engineering.arn
-        ]
-      } 
     ]
   })
 }

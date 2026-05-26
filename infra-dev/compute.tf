@@ -6,6 +6,8 @@ module "lambda" {
 
   lambda_execution_role_arn = aws_iam_role.lambda_execution_role_dev_data_engineering.arn
 
+  state_machine_arn = aws_sfn_state_machine.state_machine_dev_data_engineering.arn
+
   subnet_ids = [
     aws_subnet.private_subnet_dev_data_engineering_az1.id,
     aws_subnet.private_subnet_dev_data_engineering_az2.id
